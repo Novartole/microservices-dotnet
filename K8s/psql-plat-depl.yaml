@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: psql-depl
+spec:
+  selector:
+    matchLabels:
+      app: psql
+  template:
+    metadata:
+      labels:
+        app: psql
+    spec:
+      containers:
+      - name: psql
+        image: postgres:14.3
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_USER
+          value: postgres
+        - name: POSTGRES_DB
+          value: postgres
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres
+              key: POSTGRES_PASSWORD
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: psqldb
+      volumes:
+      - name: psqldb
+        persistentVolumeClaim:
+          claimName: psql-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: psql-clusterip-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: psql
+  ports:
+  - name: psql
+    port: 5432
+    targetPort: 5432
+    protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: psql-loadbalancer
+spec:
+  type: LoadBalancer
+  selector:
+    app: psql
+  ports:
+  - port: 5432
+    targetPort: 5432
+    protocol: TCP
+
