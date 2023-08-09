@@ -37,6 +37,7 @@ public class MessageBusSubscriber : BackgroundService
             type: ExchangeType.Fanout
         );
 
+        // create a non-durable, exclusive, autodelete queue with a generated name
         _queueName = _channel.QueueDeclare().QueueName;
         _channel.QueueBind(
             queue: _queueName,
@@ -80,6 +81,10 @@ public class MessageBusSubscriber : BackgroundService
 
         _channel.BasicConsume(
             queue: _queueName, 
+            /* 
+                send confirmation to Message bus automatically
+                otherwise a manual command ( ack (+), nack ( -* ), reject (-) ) have to be sent
+            */
             autoAck: true, 
             consumer: consumer
         );

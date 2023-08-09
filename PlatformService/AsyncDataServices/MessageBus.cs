@@ -24,6 +24,10 @@ public class MessageBusClient : IMessageBusClient
             _connection = factory.CreateConnection();
             _channel = _connection.CreateModel();
 
+            /* 
+                exchange: name of exchange
+                type: ExchangeType.Fanout ( ~ broadcasts )
+            */
             _channel.ExchangeDeclare(exchange: "trigger", type: ExchangeType.Fanout);
 
             _connection.ConnectionShutdown += RabbitMQ_ConnectionShutdown;
@@ -52,6 +56,11 @@ public class MessageBusClient : IMessageBusClient
     private void SendMessage(string message) {
         var body = Encoding.UTF8.GetBytes(message);
 
+        /*
+            exchange: "trigger" - named exchange is used
+                                  but it's also possible to use default one by setting "" as the value
+            routingKey: "" - path of a queue ("" ~ default one is used)
+        */ 
         _channel.BasicPublish(
             exchange: "trigger",
             routingKey: "",
