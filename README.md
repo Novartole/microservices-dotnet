@@ -1,1 +1,1 @@
-# microservices
+The code is mostly based on a great [course](https://www.youtube.com/watch?v=DgVjEo3OGBI) made by Les Jackson. I just played around and did some minor changes realted to a machine I work with. Within this course I built two .NET Microservices using the REST API pattern, deployed the services to DockerHub and Kubernetes cluster, built synchronous messaging between services (HTTP & gRPC) and asynchronous one between services using RabbitMQ.
